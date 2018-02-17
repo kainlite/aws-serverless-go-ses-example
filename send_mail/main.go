@@ -11,11 +11,6 @@ import (
     "github.com/aws/aws-sdk-go/aws/awserr"
 )
 
-type Request struct {
-    Email string `json:"email"`
-    Message string `json:"message"`
-}
-
 type Response struct {
     Message string `json:"message"`
 
