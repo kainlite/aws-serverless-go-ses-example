@@ -5,6 +5,7 @@ import (
     "context"
 
     "github.com/aws/aws-lambda-go/lambda"
+
     "github.com/aws/aws-sdk-go/aws"
     "github.com/aws/aws-sdk-go/aws/session"
     "github.com/aws/aws-sdk-go/service/ses"
@@ -12,11 +13,12 @@ import (
 )
 
 type Response struct {
+    Id string `json:"id"`
     Message string `json:"message"`
 
 }
 
-type Event struct {
+type Request struct {
     Email string `json:"email"`
     Message string `json:"message"`
 }
@@ -25,23 +27,24 @@ type Event struct {
 const (
     Sender = "web@skynetng.pw"
     Recipient = "kainlite@gmail.com"
-    Subject = "New mail from the site..."
     CharSet = "UTF-8"
 )
 
-func Handler(ctx context.Context, event Event) (Response, error) {
-        // To get some debug info
-        // fmt.Printf("%+v\n", ctx)
-        // fmt.Printf("%+v\n", ev)
+func lambdaHandler(ctx context.Context, req Request) (Response, error) {
+        fmt.Printf("%+v\n", ctx)
+        fmt.Printf("%+v\n", req)
 
-	send(event)
+        if (len(req.Email) > 0 && len(req.Message) > 0) {
+            send(req)
+        }
 
 	return Response{
+                Id: req.Email,
 		Message: "Mail sent!",
 	}, nil
 }
 
-func send(event Event) {
+func send(req Request) {
     // This could be an env var
     sess, err := session.NewSession(&aws.Config{
         Region:aws.String("us-east-1")},
@@ -63,21 +66,23 @@ func send(event Event) {
             Body: &ses.Body{
                 Html: &ses.Content{
                     Charset: aws.String(CharSet),
-                    Data:    aws.String(event.Message),
+                    Data:    aws.String(req.Message),
                 },
                 Text: &ses.Content{
                     Charset: aws.String(CharSet),
-                    Data:    aws.String(event.Message),
+                    Data:    aws.String(req.Message),
                 },
             },
             Subject: &ses.Content{
                 Charset: aws.String(CharSet),
-                Data:    aws.String(Subject),
+                Data:    aws.String(req.Email),
             },
         },
-        Source: aws.String(event.Email),
-            // Uncomment to use a configuration set
-            //ConfigurationSetName: aws.String(ConfigurationSet),
+        // We are using the same sender because it needs to be validated in SES.
+        Source: aws.String(Recipient),
+
+        // Uncomment to use a configuration set
+        //ConfigurationSetName: aws.String(ConfigurationSet),
     }
 
     // Attempt to send the email.
@@ -110,5 +115,5 @@ func send(event Event) {
 }
 
 func main() {
-	lambda.Start(Handler)
+    lambda.Start(lambdaHandler)
 }
