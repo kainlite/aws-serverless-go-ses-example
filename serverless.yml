@@ -1,0 +1,51 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: serverless
+
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  profile: serverless-admin
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ses:*"
+        - "lambda:*"
+      Resource:
+        - "*"
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./bin/**
+
+functions:
+  send_mail:
+    handler: bin/send_mail
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: sendMail
+          method: post
+          integration: lambda
+          cors: true
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
