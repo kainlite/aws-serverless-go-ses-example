@@ -33,7 +33,7 @@ package:
  exclude:
    - ./**
  include:
-   - ./bin/**
+   - ./send_mail/**
 
 functions:
   send_mail:
