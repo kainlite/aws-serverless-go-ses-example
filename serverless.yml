@@ -1,25 +1,13 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: serverless
-
-# frameworkVersion: "=X.X.X"
 
 provider:
   name: aws
   runtime: go1.x
   region: us-east-1
   profile: serverless-admin
+  memorySize: 128
+  versionFunctions: false
+
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -33,11 +21,11 @@ package:
  exclude:
    - ./**
  include:
-   - ./bin/**
+   - ./send_mail/**
 
 functions:
   send_mail:
-    handler: bin/send_mail
+    handler: send_mail/send_mail
     memorySize: 128
     timeout: 5
     events:

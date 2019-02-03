@@ -24,7 +24,7 @@ type Request struct {
 
 // This could be env vars
 const (
-	Sender    = "web@skynetng.pw"
+	Sender    = "web@serverless.techsquad.rocks"
 	Recipient = "kainlite@gmail.com"
 	CharSet   = "UTF-8"
 )
