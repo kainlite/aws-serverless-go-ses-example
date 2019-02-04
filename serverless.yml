@@ -1,13 +1,15 @@
-service: serverless
+service: sendMail
+
+frameworkVersion: ">=1.28.0 <2.0.0"
 
 provider:
   name: aws
   runtime: go1.x
   region: us-east-1
-  profile: serverless-admin
+  # profile: serverless-admin
   memorySize: 128
   versionFunctions: false
-
+  stage: 'prod'
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -21,19 +23,12 @@ package:
  exclude:
    - ./**
  include:
-   - ./send_mail/**
+   - ./send_mail/send_mail
 
 functions:
   send_mail:
     handler: send_mail/send_mail
-    memorySize: 128
-    timeout: 5
     events:
       - http:
           path: sendMail
           method: post
-          integration: lambda
-          cors: true
-          response:
-            headers:
-              Access-Control-Allow-Origin: "'*'"
